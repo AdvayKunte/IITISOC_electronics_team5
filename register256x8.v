@@ -1,31 +1,12 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 13.06.2024 14:35:01
-// Design Name: 
-// Module Name: register256x8
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-///////////////////////////////////////////////////////////////////////////////
 
-module register256x8 (
-    input wire clk,            
-    input wire mem_read,        
-    input wire mem_write,       
-    input wire [7:0] aluout_in,   // Input from ALU
-    input wire [7:0] address_in,   // Address input from Register File
-    output reg [7:0] memtoreg_out   // Output to Mux
+module register256x8 (clk, mem_read,mem_write, aluout_in,address_in, memtoreg_out);
+    input wire clk;            
+    input wire mem_read;        
+    input wire mem_write;       
+    input wire [7:0] aluout_in;   // Input from ALU
+    input wire [7:0] address_in;   // Address input from Register File
+    output reg [7:0] memtoreg_out;   // Output to Mux
 );
 
     reg [7:0] memory_array [255:0];  // 256 registers of 8 bits 
