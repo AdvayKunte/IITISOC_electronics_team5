@@ -7,7 +7,6 @@ module register256x8 (clk, mem_read,mem_write, aluout_in,address_in, memtoreg_ou
     input wire [7:0] aluout_in;   // Input from ALU
     input wire [7:0] address_in;   // Address input from Register File
     output reg [7:0] memtoreg_out;   // Output to Mux
-);
 
     reg [7:0] memory_array [255:0];  // 256 registers of 8 bits 
     
