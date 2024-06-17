@@ -2,8 +2,8 @@
 
  reg [7:0] RegFile [7:0];
 
-module RegFile(RA,RB,RD1,RD2,RegWrite,RegDst,A,B,clk,Mem_to_Reg);
-    input [2:0] RA,RB,RD1,RD2,RegDst;
+module RegFile(RA,RB,RD1,RegWrite,RegDst,A,B,clk,Mem_to_Reg);
+    input [2:0] RA,RB,RD1,RegDst;
     input RegWrite, clk;
     output reg [7:0] A,B;
     input [7:0] Mem_to_Reg;
@@ -22,7 +22,7 @@ module RegFile(RA,RB,RD1,RD2,RegWrite,RegDst,A,B,clk,Mem_to_Reg);
             if(RegWrite)
                 case(RegDst)
                     RD1: RegFile[RD1] <= #2 Mem_to_Reg;
-                    RD2: RegFile[RD2] <= #2 Mem_to_Reg;
+                    RB: RegFile[RB] <= #2 Mem_to_Reg;
                     default: RegFile[RegDst]<= #2 8'bxxxx;
                 endcase
         end
