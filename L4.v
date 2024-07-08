@@ -15,7 +15,7 @@ assign alu_in = L4_alu_out;
 assign mem_in = L4_mem_out;
 assign MemToRegmux = L4_MemToReg;
 
-    always @(*) begin
+    always @(posedge clk2) begin
     L4_alu_out <= #2 alu_out;
     L4_mem_out <= #2 mem_out;
     L4_MemToReg <= MemToReg;
