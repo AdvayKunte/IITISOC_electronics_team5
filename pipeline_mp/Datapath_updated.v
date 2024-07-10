@@ -11,10 +11,14 @@
 `include "mux2x1.v"
 `include "adder.v"
 `include "regpc.v"
+`include "L1.v"
+`include "L2.v"
+`include "L3.v"
+`include "L4.v"
 //the reg file is created above regfile module
 
-module Datapath(NIA,RegDst,RegWrite,ALUSrc,ALUFn,MemWrite,MemRead,MemToReg,OpFn,clk,rst);
-    input NIA,RegDst,RegWrite,ALUSrc,MemWrite,MemRead,MemToReg,clk,rst;
+module Datapath(NIA,RegDst,RegWrite,ALUSrc,ALUFn,MemWrite,MemRead,MemToReg,OpFn,clk1,clk2,rst);
+    input NIA,RegDst,RegWrite,ALUSrc,MemWrite,MemRead,MemToReg,clk1,clk2,rst;
     input [2:0] ALUFn;
     output [4:0] OpFn;
     
@@ -28,30 +32,43 @@ module Datapath(NIA,RegDst,RegWrite,ALUSrc,ALUFn,MemWrite,MemRead,MemToReg,OpFn,
     wire compbeq;
     wire [2:0] inst_br;
     wire [7:0] br_in;
-
     wire [7:0] pinc,pinci,pincj,pin;
+    reg [2:0] Raout,Rbout,Rdout;
+    reg [7:0] immout, m1out, m2out;
+    reg regdstout, regwriteout, alusrcout, alufnout, memwriteout, memreadout, memtoregout; 
+    reg L2_alusrcout,L2_alufnout,L2_memwriteout,L2_memreadout,L2_memtoregout;
+    reg [7:0] l2immout, l2Aout, l2Bout, l2m1out, l2m2out;
+    reg [7:0] L3Bout, L3alu_outout;
+    reg L3memwriteout, L3memreadout, L3memtoregout;
+    reg [7:0] L4alu_in, L4mem_in;
+    reg L4MemToRegmux;
+
+   //Stage 1 
     adder a1(.in1(tIR),.in2(8'b00000001),.out(pinc));
     adder a2(.in1(SignExtendedImm),.in2(pinc),.out(pinci));
     mux2x1 mp1(.mem_in(pinc),.alu_in(pinci),.memtoreg_sel(alubeq),.mux_out(pincj));
     mux2x1 mp2(.mem_in(Immj),.alu_in(pincj),.memtoreg_sel(NIA),.mux_out(pin));
     pc pc1(pin,clk,rst,tIR); 
     //programcounter PC(.imj(Immj),.imi(SignExtendedImm),.clk(clk),.rst(rst),.branch(alubeq),.nia(NIA),.add(tIR));
-  
     instreg IR(.add(tIR),.inst(tInst));
-  
     decoder DE(.inst(tInst),.ra_i(Ra),.rb_i(Rb),.rd_i(Rd),.immi(Immi),.immj(Immj),.opfn(OpFn));
-
-    regfile_mux Rmux(.RB(Rb), .RDi(Rd), .RegDst(RegDst), .RDo(RDo));
-  
-    RegFile RF(.RA(Ra),.RB(Rb),.RDo(RDo),.RegWrite(RegWrite),.A(A),.B(B),.clk(clk),.Mem_to_Reg(MemReg));
-  
     SignExtender SE(.Imm7(Immi),.Imm8(SignExtendedImm));
-  
-    mux2x1 MI(.mem_in(B),.alu_in(SignExtendedImm),.memtoreg_sel(ALUSrc),.mux_out(FinalB));
+    L1 l1(.clk1(clk1), .Ra(Ra), .Rb(Rb), .Rd(Rd), .SignExtendedImm(SignExtendedImm), .m1(pinc), .m2(pinci), .RegDst(RegDst),.RegWrite(RegWrite),.ALUSrc(ALUSrc),.ALUFn(ALUFn),.MemWrite(MemWrite),.MemRead(MemRead),.MemtoReg(MemtoReg), .Raout(Raout), .Rbout(Rbout), .Rdout(Rdout), .immout(immout), .m1out(m1out), .m2out(m2out), .regdstout(regdstout), .regwriteout(regwriteout), .alusrcout(alusrcout), .alufnout(alufnout), .memwriteout(memwriteout), .memreadout(memreadout), .memtoregout(memtoregout));
 
-    alu AL(.Ra(A),.Rb(FinalB),.alufn(ALUFn),.alubeq(alubeq),.alu_out(alu_out));
+    //Stage 2
+    regfile_mux Rmux(.RB(Rbout), .RDi(Rdout), .RegDst(regdstout), .RDo(RDo));
+    RegFile RF(.RA(Raout),.RB(Rbout),.RDo(RDo),.RegWrite(regwriteout),.A(A),.B(B),.clk(clk2),.Mem_to_Reg(MemReg));
+    L2 l2(.clk2(clk2), .L1_m1(m1out), .L1_m2(m2out), .L1_SignExtendedImm(immout), .L1_A(A), .L1_B(B), .L1_ALUSrc(alusrcout),.L1_ALUFn(alufnout),.L1_MemWrite(memwriteout),.L1_MemRead(memreadout),.L1_MemtoReg(memtoregout), .ALUSrcout(L2_alusrcout), .ALUFnout(L2_alufnout), .memwriteout(L2_memwriteout), .memreadout(L2_memreadout), .memtoregout(L2_memtoregout),.immout(l2immout),.Aout(l2Aout),.Bout(l2Bout),.m1out(l2m1out),.m2out(l2m2out));
   
-    register256x8 MEM(.clk(clk),.mem_read(MemRead),.mem_write(MemWrite),.aluout_in(B),.address_in(alu_out),.memtoreg_out(ToMux));
+  //stage 3
+    mux2x1 MI(.mem_in(l2Bout),.alu_in(l2immout),.memtoreg_sel(L2_alusrcout),.mux_out(FinalB));
+    alu AL(.Ra(l2Aout),.Rb(FinalB),.alufn(L2_alufnout),.alubeq(alubeq),.alu_out(alu_out));
+    L3 l3(.clk1(clk1), .L2_B(l2Bout), .L2_alu_out(alu_out), .L2_MemWrite(L2_memwriteout), .L2_MemRead(L2_memreadout), .L2_MemtoReg(L2_memtoregout), .Bout(L3Bout), .alu_outout(L3alu_outout), .memwriteout(L3memwriteout), .memreadout(L3memreadout), .memtoregout(L3memtoregout));
   
-    mux2x1 MU(.mem_in(ToMux),.alu_in(alu_out),.memtoreg_sel(MemToReg),.mux_out(MemReg));
+  //stage 4
+    register256x8 MEM(.clk2(clk2),.mem_read(L3memreadout),.mem_write(L3memwriteout),.aluout_in(L3Bout),.address_in(L3alu_outout),.memtoreg_out(ToMux));
+    L4 l4(.alu_in(L4alu_in), .mem_in(L4mem_in), .MemToRegmux(L4MemToRegmux), .alu_out(L3alu_outout), .mem_out(ToMux), .MemToReg(L3memtoregout), .clk2(clk2));
+  
+  //stage 5
+    mux2x1 MU(.mem_in(L4mem_in),.alu_in(L4alu_in),.memtoreg_sel(L4MemToRegmux),.mux_out(MemReg));
 endmodule
