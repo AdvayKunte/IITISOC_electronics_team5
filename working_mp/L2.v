@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module L2(clk2, L1_m1, L1_m2, L1_SignExtendedImm, L1_A, L1_B, L1_ALUSrc,L1_ALUFn,L1_MemWrite,L1_MemRead,L1_MemtoReg, ALUSrcout, ALUFnout, memwriteout, memreadout, memtoregout);
+module L2(clk2, L1_m1, L1_m2, L1_SignExtendedImm, L1_A, L1_B, L1_ALUSrc,L1_ALUFn,L1_MemWrite,L1_MemRead,L1_MemtoReg, ALUSrcout, ALUFnout, memwriteout, memreadout, memtoregout, immout, Aout, Bout, m1out, m2out);
 
     input [7:0] L1_SignExtendedImm, L1_A, L1_B, L1_m1, L1_m2;
     input clk2;
