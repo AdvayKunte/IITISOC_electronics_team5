@@ -41,7 +41,7 @@ module instreg(
                     mem[i + 1] = 16'b0000000000000000; // Insert NOP
                     mem[i + 2] = 16'b0000000000000000; // Insert NOP
                     mem[i + 3] = 16'b0000000000000000; // Insert NOP
-                    i = i+4;
+                    i = i+3;
                 end
             end else if (mem[i+1][15:13] == 3'b001 || mem[i+1][15:13] == 3'b010) begin
                 if (mem[i+1][5:3] == r2wr) begin
@@ -51,7 +51,7 @@ module instreg(
                     mem[i + 1] = 16'b0000000000000000; // Insert NOP
                     mem[i + 2] = 16'b0000000000000000; // Insert NOP
                     mem[i + 3] = 16'b0000000000000000; // Insert NOP
-                    i = i+4;
+                    i = i+3;
                 end
             end
         end
