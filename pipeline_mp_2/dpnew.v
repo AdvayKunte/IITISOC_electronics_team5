@@ -85,7 +85,7 @@ module Datapath(clk,rst);
   //stage 3
     mux2x1 MI(.mem_in(l2Bout),.alu_in(l2immout),.memtoreg_sel(L2_alusrcout),.mux_out(FinalB));
     alu AL(.Ra(l2Aout),.Rb(FinalB),.alufn(L2_alufnout),.alubeq(alubeq),.alu_out(alu_out));
-    mux2x1 mp1(.mem_in(pinc),.alu_in(pinci),.memtoreg_sel(alubeq),.mux_out(pincj));
+    mux2x1 mp1(.mem_in(pinc),.alu_in(l2m2out),.memtoreg_sel(alubeq),.mux_out(pincj));
     L3 l3(.clk1(clk), .L2_regwradd(L2_regwradd),  .L2_B(l2Bout), .L2_alu_out(alu_out), .L2_MemWrite(L2_memwriteout), .L2_MemRead(L2_memreadout), .L2_MemtoReg(L2_memtoregout), .L2_RegWrite(L2_regwrite) ,  .Bout(L3Bout), .alu_outout(L3alu_outout), .memwriteout(L3memwriteout), .memreadout(L3memreadout), .memtoregout(L3memtoregout) , .regwriteout(L3regwriteout) , .regwradd(L3_regwradd));
  
   //stage 4
