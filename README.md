@@ -6,9 +6,9 @@ The repository contains the verilog files of the individual components of the mi
 We have created a mp_tb.v , testbench to test the working of the microprocessor designed by loading in data into Memory and instructions in the Instruction Memory as done by us in the mp_tb.v file
 Hence upon downloading all the files and running the mp_tb.v file , will lead to simulation of working of the microprocessor 
 <br>
-![Screenshot 2024-07-22 164720](https://github.com/user-attachments/assets/5580c3aa-68bd-4094-9568-f6fda30cda21)
+<img width="731" alt="MP arch" src="https://github.com/user-attachments/assets/5580c3aa-68bd-4094-9568-f6fda30cda21">
 <br>
-![Screenshot 2024-07-22 164612](https://github.com/user-attachments/assets/d7394452-682f-4198-9ac6-124fb57f8e95)
+<img width="731" alt="MP arch" src="https://github.com/user-attachments/assets/d7394452-682f-4198-9ac6-124fb57f8e95">
 <br>
 You may refer to this chart to try and run instructions based on the given format of coding
 For R type instruction 
